@@ -32,4 +32,5 @@ PBJ/
 └── tools.py # Tool call 
 └── toy_canvas.db # toy database (set up by running toy_db.py)
 
+This is a personal prototype. The code is provided here for demonstration and feedback. Please don’t reuse or redistribute it without asking — thanks!
 

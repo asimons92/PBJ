@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Review Parsed Note</h1>
+
+    <h2>Original Note:</h2>
+    <p>{{ original_note }}</p>
+
+    <h2>Parsed Notes:</h2>
+
+    {% for record in parsed_notes %}
+    <div>
+        <h3>Record {{ loop.index }}</h3>
+        <table border="1" cellpadding="5">
+            <tbody>
+                {% for key, value in record.items() %}
+                <tr>
+                    <td><strong>{{ key }}</strong></td>
+                    <td>
+                        {% if value is mapping %}
+                        <table border="1" cellpadding="3">
+                            {% for k, v in value.items() %}
+                            <tr>
+                                <td>{{ k }}</td>
+                                <td>{{ v }}</td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                        {% elif value is sequence and not value is string %}
+                        <ul>
+                            {% for item in value %}
+                            <li>{{ item }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                        {{ value }}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endfor %}
+
+</body>
+</html>

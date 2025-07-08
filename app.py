@@ -29,27 +29,28 @@ def create_app():
         teacher_note = request.form["user_input"]
         parsed_notes = call_openai_function_call(teacher_note)
 
+        prepared_notes = []
+
         with SessionLocal() as session:
-            prepared_notes = []
             for record in parsed_notes:
-                match_result = match_id_with_name_web(record, session)
+                # resolve student id & candidates
+                match_result = match_id_with_name_web(record.copy(), session)
 
-                # split fields as before
-                simple, nested = split_notes(record)
+                # inject matched values back into record
+                record["student_id"] = match_result.get("student_id")
+                record["student_name"] = match_result.get("student_name")
+                record["candidate_students"] = match_result.get("candidate_students", [])
 
-                prepared_notes.append({
-                    "simple": simple,
-                    "nested": nested,
-                    "candidate_students": match_result["candidate_students"],
-                    "student_id": match_result["student_id"],
-                    "student_name": match_result["student_name"],
-                })
+                prepared_notes.append(record)
 
         return render_template(
             "review.html",
             original_note=teacher_note,
             parsed_notes=prepared_notes
         )
+
+
+
     
     @app.route("/review",methods=["POST"])
     def review():

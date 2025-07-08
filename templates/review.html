@@ -13,81 +13,53 @@
 
     <h2>Parsed Notes:</h2>
 
-<form method="post" action="/review">
-    {% for record in parsed_notes %}
-<div>
-    <h3>Record {{ loop.index0 }}</h3>
-
-    <table border="1" cellpadding="5">
-        <tbody>
-            {# simple fields first #}
-            {% for key, value in record.simple.items() %}
-            <tr>
-                <td><strong>{{ key }}</strong></td>
-                <td>
-                    <input 
-                    type="text" 
-                    name="record_{{ loop.index0 }}_{{ key }}" 
-                    value="{{ value }}"
-                    >
-                </td>
-            </tr>
-            {% endfor %}
-
-            {# nested fields #}
-            {% for key, value in record.nested.items() %}
-            <tr>
-                <td><strong>{{ key }}</strong></td>
-                <td>
-                    {% if value is mapping %}
-                    <table border="1" cellpadding="3">
-                        {% for k, v in value.items() %}
-                        <div>
-                            <label>{{ k }}</label>
-                            <input
-                                type="text"
-                                name="record_{{loop.index0}}_{{key}}_{{k}}"
-                                value="{{v}}"
-                            >
-                        </div>
-                        {% endfor %}
-                    </table>
-                    {% elif value is sequence and not value is string %}
-                    <ul>
-                        {% for item in value %}
-                        <li>{{ item }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% else %}
-                    {{ value }}
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <form method="post" action="/review">
+        {% for record in parsed_notes %}
+        {% set rec_idx = loop.index0 %}
+        <div>
+            <h3>Record {{ rec_idx }}</h3>
+            <table border="1" cellpadding="5">
+                <tbody>
+                    {% for key, value in record.items() %}
+                        {% if key != "candidate_students" %}
+                        <tr>
+                            <td><strong>{{ key }}</strong></td>
+                            <td>
+                                {% if value is mapping %}
+                                    {% for k, v in value.items() %}
+                                    <div>
+                                        <label>{{ k }}</label>
+                                        <input type="text" name="record_{{rec_idx}}_{{key}}_{{k}}" value="{{v}}">
+                                    </div>
+                                    {% endfor %}
+                                {% elif value is sequence and not value is string %}
+                                    <input type="text" name="record_{{rec_idx}}_{{key}}" value="{{value}}">
+                                {% else %}
+                                    <input type="text" name="record_{{rec_idx}}_{{key}}" value="{{value}}">
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
     
-    {% if record.candidate_students %}
-    <p><strong>Select correct student for "{{ record.student_name }}"</strong>:</p>
-    <select name="record_{{ loop.index0 }}_student_id">
-        <option value="">-- Select --</option>
-        {% for candidate in record.candidate_students %}
-        <option value="{{ candidate.id }}">{{ candidate.name }} ({{ candidate.similarity }}%)</option>
+            {% if record.candidate_students %}
+            <p><strong>Select correct student for "{{ record.student_name }}"</strong>:</p>
+            <select name="record_{{rec_idx}}_student_id">
+                <option value="">-- Select --</option>
+                {% for candidate in record.candidate_students %}
+                <option value="{{ candidate.id }}">{{ candidate.name }} ({{ candidate.similarity }}%)</option>
+                {% endfor %}
+            </select>
+            {% endif %}
+        </div>
         {% endfor %}
-    </select>
-    <input type="hidden" name="record_{{ loop.index0 }}_student_name" value="{{ record.student_name }}">
-    {% else %}
-    <p><em>Matched student: {{ record.student_name }}</em></p>
-    <input type="hidden" name="record_{{ loop.index0 }}_student_id" value="{{ record.student_id }}">
-    <input type="hidden" name="record_{{ loop.index0 }}_student_name" value="{{ record.student_name }}">
-    {% endif %}
     
-
-</div>
-{% endfor %}
-
-<button type="submit">Submit</button>
-</form>
+        <button type="submit">Submit</button>
+    </form>
+    
+    
 
 </body>
 </html>

@@ -6,38 +6,8 @@ import json
 from schemas import BehaviorRecord
 from pydantic import ValidationError
 from toy_db import SessionLocal, Student, BehaviorRecordDB, Course, student_course
-from tools import tools
 from fuzzywuzzy import fuzz, process
 
-# --- Load environment and initialize OpenAI client --- #
-load_dotenv()
-client = OpenAI(api_key=os.getenv("OPEN_AI_API_KEY"))
-
-# --- GPT Function Call --- #
-def call_openai_function_call(note, retry=False):
-    now_iso = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
-
-    prompt = (
-        "You are an assistant that extracts a structured behavior record for each student "
-        "mentioned in a teacher's note. Use the provided function schema. "
-        f"Use this timestamp for recording: {now_iso}"
-    ) if not retry else (
-        "Previous extraction failed validation. Re-extract accurately, ensuring all required fields "
-        "are complete and match the schema."
-    )
-
-    response = client.chat.completions.create(
-        model="gpt-4-turbo-preview",
-        temperature=0,
-        messages=[{"role": "system", "content": prompt}, {"role": "user", "content": note}],
-        tools=tools,
-        tool_choice="auto"
-    )
-
-    return [
-        json.loads(tool_call.function.arguments)
-        for tool_call in response.choices[0].message.tool_calls
-    ]
 
 # --- Match ID and Name --- #
 def match_id_with_name(record, session, similarity_threshold=80):
@@ -78,7 +48,7 @@ def match_id_with_name(record, session, similarity_threshold=80):
     else:
         return handle_manual_student_selection(record, session, student_names)
 
-from fuzzywuzzy import fuzz, process
+
 
 def match_id_with_name_web(record, session, similarity_threshold=80):
     """
@@ -119,6 +89,7 @@ def match_id_with_name_web(record, session, similarity_threshold=80):
                 "similarity": score
             })
 
+    print("Candidates for", record["student_name"], ":", result["candidate_students"]) #Debug print
     return result
 
 

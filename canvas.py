@@ -1,6 +1,6 @@
 from canvasapi import Canvas
 from dotenv import load_dotenv
-from toy_db import SessionLocal, Student, Course
+from services.db import SessionLocal, Student, Course
 import os
 
 

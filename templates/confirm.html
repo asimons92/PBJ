@@ -9,12 +9,15 @@
     <h1>
         Confirm before committing to the database.
     </h1>
-    <h2>Records Saved</h2>
-    <p>{{ num_saved }} records saved to the database.</p>
 
-    {% if num_failed %}
-        <p>{{ num_failed }} records failed validation and were skipped.</p>
-    {% endif %}
+    <h1>Raw Form Data</h1>
+
+    <pre>
+        {% for key, value in form_data.items() %}
+            {{ key }} = {{ value }}
+        {% endfor %}
+    </pre>
+    
 
 <a href="/">Go back</a>
 

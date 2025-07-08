@@ -53,47 +53,15 @@ def create_app():
     
     @app.route("/review",methods=["POST"])
     def review():
-        from werkzeug.datastructures import MultiDict
-        from collections import defaultdict
-
-        form_data = MultiDict(request.form)
-
-        record_indices = set()
-        for key in form_data.keys():
-            if key.startswith("record_"):
-                parts = key.split("_")
-                if len(parts) >= 2:
-                    record_indices.add(int(parts[1]))
-
-
-        reconstructed_records = []
-
-        for idx in sorted(record_indices):
-                record = {}
-                prefix = f"record_{idx}_"
-
-                for key, value in form_data.items():
-                    if key.startswith(prefix):
-                        field_name = key[len(prefix):]
-                        record[field_name] = value.strip() if isinstance(value, str) else value
-
-                reconstructed_records.append(record)
-
-        original_note = form_data.get("original_note", "")        
-
-        # Validate records
-        validated, failed = validate_behavior_records(reconstructed_records)
-
-        with SessionLocal() as session:
-            store_records_in_db(validated, session)
-            session.commit()
+        form_data = request.form
 
         return render_template(
             "confirm.html",
-            num_saved=len(validated),
-            num_failed=len(failed),
-            original_note=original_note
+            form_data=form_data
         )
+
+
+
 
     return app
 

@@ -26,16 +26,16 @@ def submit():
 
     return render_template(
         "review.html",
-        original_note=raw_json,
+        original_note=teacher_note,
         parsed_notes=normalized_records
     )
 
 @app.route("/review", methods=["POST"])
 def review():
-    note = session.get("note_json")
+    form_data = request.form
     return render_template(
         "confirm.html",
-        form_data=note
+        form_data=form_data
     )
 
 print("Registered routes:")

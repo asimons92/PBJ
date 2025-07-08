@@ -78,6 +78,50 @@ def match_id_with_name(record, session, similarity_threshold=80):
     else:
         return handle_manual_student_selection(record, session, student_names)
 
+from fuzzywuzzy import fuzz, process
+
+def match_id_with_name_web(record, session, similarity_threshold=80):
+    """
+    Try to match a record's student name to a student in DB.
+    If exact match: set student_id
+    If fuzzy match: return candidate_students for UI
+    """
+    result = {
+        "student_name": record.get("student_name"),
+        "student_id": None,
+        "candidate_students": []
+    }
+
+    # Try exact match
+    student = session.query(Student).filter_by(name=record["student_name"]).first()
+    if student:
+        result["student_id"] = student.id
+        result["student_name"] = student.name
+        return result
+
+    # No exact match → fuzzy match
+    all_students = session.query(Student).all()
+    student_names = [(s.name, s.id) for s in all_students]
+
+    best_matches = process.extract(
+        record["student_name"],
+        [name for name, _ in student_names],
+        scorer=fuzz.ratio,
+        limit=5
+    )
+
+    for name, score in best_matches:
+        if score >= similarity_threshold:
+            student_id = next(sid for n, sid in student_names if n == name)
+            result["candidate_students"].append({
+                "name": name,
+                "id": student_id,
+                "similarity": score
+            })
+
+    return result
+
+
 def handle_manual_student_selection(record, session, student_names):
     print(f"\nStudent not found. Please select from available students:")
     for i, (name, student_id) in enumerate(student_names, 1):

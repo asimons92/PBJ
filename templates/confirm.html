@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Confirm</title>
+</head>
+<body>
+    <h1>
+        Confirm before committing to the database.
+    </h1>
+    <h2>Records Saved</h2>
+    <p>{{ num_saved }} records saved to the database.</p>
+
+    {% if num_failed %}
+        <p>{{ num_failed }} records failed validation and were skipped.</p>
+    {% endif %}
+
+<a href="/">Go back</a>
+
+</body>
+</html>

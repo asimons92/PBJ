@@ -26,6 +26,12 @@ def create_app():
     def submit():
         teacher_note = request.form["user_input"]
         parsed_notes = call_openai_function_call(teacher_note)
+        
+        for record in parsed_notes:
+            match_result = match_id_with_name_web(record, session)
+            record["student_id"] = match_result["student_id"]
+            record["candidate_students"] = match_result["candidate_students"]
+
 
         # Process each record to split fields
         prepared_notes = []

@@ -1,6 +1,6 @@
 from typing import List, Optional, Literal
 from datetime import datetime
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, Field
 
 # --- Nested models ---
 
@@ -32,15 +32,14 @@ class Intervention(BaseModel):
 # --- Main model ---
 
 class BehaviorRecord(BaseModel):
-    student_name: str
-    source: Literal["teacher_note"]
-    recording_timestamp: datetime
+    student_name: str = ""
+    source: Literal["teacher_note"] = "teacher_note"
+    recording_timestamp: datetime = Field(default_factory=datetime.utcnow)
 
-    # Optional or relaxed fields
     student_id: Optional[int] = None
-    behavior: Optional[Behavior] = None
-    context: Optional[Context] = None
-    intervention: Optional[Intervention] = None
+    behavior: Behavior = Field(default_factory=Behavior)
+    context: Context = Field(default_factory=Context)
+    intervention: Intervention = Field(default_factory=Intervention)
     behavior_date: Optional[datetime] = None
 
     @field_validator("student_id", mode="before")

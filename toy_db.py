@@ -78,7 +78,7 @@ def add_dummy_data():
 
     # Create 4th period History course
     history_course = Course(canvas_course_id=404, name="4th Period History")
-    science_course = Course(canvas_course_id=404, name="5th Period Science")
+    science_course = Course(canvas_course_id=505, name="5th Period Science")
 
     # Create students based on teacher notes
     students = [

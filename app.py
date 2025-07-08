@@ -4,6 +4,20 @@ from main import call_openai_function_call
 def create_app():
     app = Flask(__name__)
 
+    def split_notes(records):
+        """
+        Split a dict into flat/simple and nested fields.
+        """
+        simple_fields = {}
+        nested_fields = {}
+
+        for key, value in records.items():
+            if isinstance(value, dict):
+                nested_fields[key] = value
+            else:
+                simple_fields[key] = value
+        return simple_fields, nested_fields
+
     @app.route("/", methods=["GET"])
     def home():
         return render_template("index.html")
@@ -12,13 +26,21 @@ def create_app():
     def submit():
         teacher_note = request.form["user_input"]
         parsed_notes = call_openai_function_call(teacher_note)
-        # assume parsed_note is a dict already
+
+        # Process each record to split fields
+        prepared_notes = []
+        for record in parsed_notes:
+            simple, nested = split_notes(record)
+            prepared_notes.append({
+                "simple": simple,
+                "nested": nested
+            })
+
         return render_template(
             "review.html",
             original_note=teacher_note,
-            parsed_notes=parsed_notes
+            parsed_notes=prepared_notes
         )
-
     return app
 
 if __name__ == "__main__":

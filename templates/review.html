@@ -3,63 +3,81 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Document</title>
+    <title>Review Parsed Note</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2em; }
+        .section { margin-bottom: 2em; }
+        ul { margin: 0.5em 0 0.5em 2em; }
+        .alert { color: #b00; font-weight: bold; }
+        table { border-collapse: collapse; margin-bottom: 1em; }
+        th, td { padding: 5px 10px; }
+        h1, h2, h3 { margin-top: 0; }
+        label { margin-right: 0.5em; }
+        select, input[type="text"] { margin-bottom: 0.5em; }
+        button[type="submit"] { padding: 0.5em 1.5em; font-size: 1em; }
+        .record-section { border: 1px solid #ccc; border-radius: 6px; padding: 1em; margin-bottom: 2em; background: #fafafa; }
+    </style>
 </head>
 <body>
     <h1>Review Parsed Note</h1>
 
-    <h2>Original Note:</h2>
-    <p>{{ original_note }}</p>
+    <div class="section">
+        <h2>Original Note:</h2>
+        <p>{{ original_note }}</p>
+    </div>
 
-    <h2>Parsed Notes:</h2>
+    <div class="section">
+        <h2>Parsed Notes:</h2>
 
-    <form method="post" action="/review">
-        {% for record in parsed_notes %}
-        {% set rec_idx = loop.index0 %}
-        <div>
-            <h3>Record {{ rec_idx }}</h3>
-            <table border="1" cellpadding="5">
-                <tbody>
-                    {% for key, value in record.items() %}
-                        {% if key != "candidate_students" %}
-                        <tr>
-                            <td><strong>{{ key }}</strong></td>
-                            <td>
-                                {% if value is mapping %}
-                                    {% for k, v in value.items() %}
-                                    <div>
-                                        <label>{{ k }}</label>
-                                        <input type="text" name="record_{{rec_idx}}_{{key}}_{{k}}" value="{{v}}">
-                                    </div>
-                                    {% endfor %}
-                                {% elif value is sequence and not value is string %}
-                                    <input type="text" name="record_{{rec_idx}}_{{key}}" value="{{value}}">
-                                {% else %}
-                                    <input type="text" name="record_{{rec_idx}}_{{key}}" value="{{value}}">
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% endif %}
-                    {% endfor %}
-                </tbody>
-            </table>
-    
-            {% if record.candidate_students %}
-            <p><strong>Select correct student for "{{ record.student_name }}"</strong>:</p>
-            <select name="record_{{rec_idx}}_student_id">
-                <option value="">-- Select --</option>
-                {% for candidate in record.candidate_students %}
-                <option value="{{ candidate.id }}">{{ candidate.name }} ({{ candidate.similarity }}%)</option>
-                {% endfor %}
-            </select>
-            {% endif %}
-        </div>
-        {% endfor %}
-    
-        <button type="submit">Submit</button>
-    </form>
-    
-    
+        <form method="post" action="/review">
+            {% for record in parsed_notes %}
+            {% set rec_idx = loop.index0 %}
+            <div class="record-section">
+                <h3>Record {{ rec_idx }}</h3>
+                <table border="1">
+                    <tbody>
+                        {% for key, value in record.items() %}
+                            {% if key != "candidate_students" %}
+                            <tr>
+                                <td><strong>{{ key }}</strong></td>
+                                <td>
+                                    {% if value is mapping %}
+                                        {% for k, v in value.items() %}
+                                        <div>
+                                            <label>{{ k }}</label>
+                                            <input type="text" name="record_{{rec_idx}}_{{key}}_{{k}}" value="{{v}}">
+                                        </div>
+                                        {% endfor %}
+                                    {% elif value is sequence and not value is string %}
+                                        <input type="text" name="record_{{rec_idx}}_{{key}}" value="{{value}}">
+                                    {% else %}
+                                        <input type="text" name="record_{{rec_idx}}_{{key}}" value="{{value}}">
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+        
+                {% if record.candidate_students %}
+                <div class="alert">
+                    <p>Select correct student for "{{ record.student_name }}":</p>
+                    <select name="record_{{rec_idx}}_student_id">
+                        <option value="">-- Select --</option>
+                        {% for candidate in record.candidate_students %}
+                        <option value="{{ candidate.id }}">{{ candidate.name }} ({{ candidate.similarity }}%)</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        
+            <button type="submit">Submit</button>
+        </form>
+    </div>
 
+    <a href="/">Go back</a>
 </body>
 </html>

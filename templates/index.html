@@ -3,14 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>PBJ Prototype</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2em; }
+        .section { margin-bottom: 2em; }
+        ul { margin: 0.5em 0 0.5em 2em; }
+        .alert { color: #b00; font-weight: bold; }
+        h1, h2, h3 { margin-top: 0; }
+        label { margin-right: 0.5em; }
+        input[type="text"] { margin-bottom: 0.5em; padding: 0.3em; font-size: 1em; }
+        button[type="submit"] { padding: 0.5em 1.5em; font-size: 1em; }
+        form { margin-top: 1em; }
+    </style>
 </head>
 <body>
-    <h1 data-test="index-header">
-        PBJ Prototype
-    </h1>
-    <p>Prototype Flask UI for PBJ (Positive Behavior & JSON)</p>
-    <div>
+    <h1 data-test="index-header">PBJ Prototype</h1>
+    <div class="section">
+        <p>Prototype Flask UI for PBJ (Positive Behavior & JSON)</p>
+    </div>
+    <div class="section">
         <form data-test="index-input" method="post" action="/submit">
             <label for="user_input">Enter text:</label>
             <input type="text" id="user_input" name="user_input" required>

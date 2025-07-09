@@ -4,38 +4,42 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Confirm</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2em; }
+        .section { margin-bottom: 2em; }
+        ul { margin: 0.5em 0 0.5em 2em; }
+        .alert { color: #b00; font-weight: bold; }
+    </style>
 </head>
 <body>
-    <h1>
-        Confirm before committing to the database.
-    </h1>
+    <h1>Confirm before committing to the database.</h1>
 
-    <p>
-        Number of Records to Post:
+    <div class="section">
+        <strong>Number of Records to Post:</strong>
         {% if num_records %}
-            {{num_records}}
+            {{ num_records }}
         {% endif %}
-    </p>
+    </div>
 
-    <p>
+    {% if result %}
         {% if result['candidate_students'] %}
-            There were no perfect matches for a student: {{result['student_name']}},
-            Are any of these the student you meant?
-                <pre>
+            <div class="section alert">
+                There were no perfect matches for a student: <strong>{{ result['student_name'] }}</strong>.<br>
+                Are any of these the student you meant?
+                <ul>
                     {% for s in result['candidate_students'] %}
-                        {{s}}
+                        <li>{{ s }}</li>
                     {% endfor %}
-                {% endif %}
-                </pre>
-
-        {% if result %}
-            Student Name: {{result['student_name']}}
-            Matched ID: {{result['student_id']}}
+                </ul>
+            </div>
+        {% else %}
+            <div class="section">
+                <strong>Student Name:</strong> {{ result['student_name'] }}<br>
+                <strong>Matched ID:</strong> {{ result['student_id'] }}
+            </div>
         {% endif %}
-    </p>
-    
+    {% endif %}
 
-<a href="/">Go back</a>
-
+    <a href="/">Go back</a>
 </body>
 </html>

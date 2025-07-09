@@ -33,6 +33,7 @@ def submit():
 @app.route("/review", methods=["POST"])
 def review():
     form_data = request.form
+    print(form_data)
     return render_template(
         "confirm.html",
         form_data=form_data

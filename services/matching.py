@@ -1,5 +1,16 @@
-from db import SessionLocal, Student, BehaviorRecordDB, Course, student_course
+from services.db import SessionLocal, Student, BehaviorRecordDB, Course, student_course
+from fuzzywuzzy import fuzz, process
 
+def extract_records(form,num_records):
+    records = []
+    for i in range(num_records):
+        record = {}
+        for key,value in form.items():
+            if key.startswith(f"record_{i}_"):
+                field_name = key[len(f"record_{i}_"):]
+                record[field_name] = value
+            records.append(record) 
+    return records
 
 def match_id_exact(record, session):
     result = {
@@ -15,10 +26,11 @@ def match_id_exact(record, session):
         result["student_name"] = student.name
         return result
     else:
-        match_id_fuzzy(record)
-        ###
+        candidate_students = match_id_fuzzy(record,session)
+        result["candidate_students"] = candidate_students
+        return result
 
-def match_id_fuzzy(record,session,similarity_thresh=80):
+def match_id_fuzzy(record,session,similarity_threshold=80):
     candidate_students = []
     all_students = session.query(Student).all()
     student_names = [(s.name, s.id) for s in all_students]
@@ -38,6 +50,7 @@ def match_id_fuzzy(record,session,similarity_thresh=80):
                 "id": student_id,
                 "similarity": score
             })
+
     return candidate_students
     
 
@@ -50,24 +63,3 @@ def pull_students_from_course(course):
     students = course.students
     return students
 
-with SessionLocal() as session:
-    courses = pull_courses_from_db(session)
-    for course in courses:
-        print(course.name)
-        print(course.id)
-    print("What course?")
-    user_selection = input()
-    selected_course = None
-    for course in courses:
-        if str(course.id) == user_selection or course.name == user_selection:
-            selected_course = course
-            break
-
-    if selected_course:
-        print(f"Selected course: {selected_course.name} (ID: {selected_course.id})")
-    else:
-        print("Course not found.")
-    
-    students = pull_students_from_course(selected_course)
-    for s in students:
-        print(s.name)

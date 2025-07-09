@@ -10,13 +10,29 @@
         Confirm before committing to the database.
     </h1>
 
-    <h1>Raw Form Data</h1>
+    <p>
+        Number of Records to Post:
+        {% if num_records %}
+            {{num_records}}
+        {% endif %}
+    </p>
 
-    <pre>
-        {% for key, value in form_data.items() %}
-            {{ key }} = {{ value }}
-        {% endfor %}
-    </pre>
+    <p>
+        {% if result['candidate_students'] %}
+            There were no perfect matches for a student: {{result['student_name']}}
+            Are any of these the student you meant?
+                <pre>
+                    {% for s in result['candidate_students'] %}
+                        {{s}}
+                    {% endfor %}
+                {% endif %}
+                </pre>
+
+        {% if result %}
+            Student Name: {{result['student_name']}}
+            Matched ID: {{result['student_id']}}
+        {% endif %}
+    </p>
     
 
 <a href="/">Go back</a>

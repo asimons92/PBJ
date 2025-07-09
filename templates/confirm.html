@@ -21,24 +21,16 @@
         {% endif %}
     </div>
 
-    {% if result %}
-        {% if result['candidate_students'] %}
-            <div class="section alert">
-                There were no perfect matches for a student: <strong>{{ result['student_name'] }}</strong>.<br>
-                Are any of these the student you meant?
-                <ul>
-                    {% for s in result['candidate_students'] %}
-                        <li>{{ s }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-        {% else %}
-            <div class="section">
-                <strong>Student Name:</strong> {{ result['student_name'] }}<br>
-                <strong>Matched ID:</strong> {{ result['student_id'] }}
-            </div>
-        {% endif %}
-    {% endif %}
+    <div class="section">
+        {% for result in results %}
+            <p>
+                Student Name: {{result.student_name}}
+                Student ID: {{result.student_id}}
+                Other Possible Matches: {{result.candidate_students}}
+            </p>
+        {% endfor %}
+
+    </div>
 
     <a href="/">Go back</a>
 </body>

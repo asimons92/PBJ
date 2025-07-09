@@ -3,7 +3,7 @@ from services.open_ai_client import call_openai_function_call
 from services.db import SessionLocal
 from tools import tools
 from schemas import BehaviorRecord
-from services.matching import extract_records, match_id_exact, match_id_fuzzy
+from services.matching import extract_records, match_id_exact, match_id_fuzzy, get_num_records
 
 
 app = Flask(__name__)
@@ -34,23 +34,15 @@ def submit():
 @app.route("/review", methods=["POST"])
 def review():
     form_data = request.form
-
-    def get_num_records(form):
-        indices = set()
-        for key in form.keys():
-            if key.startswith("record_"):
-                parts = key.split("_")
-                if len(parts) >= 3:
-                    indices.add(int(parts[1]))
-        return max(indices) + 1 if indices else 0
-    
     num_records = get_num_records(form_data)
-    records = extract_records(request.form,num_records)
+    records = extract_records(form_data,num_records)
 
+
+    results = []
     with SessionLocal() as session:
         for record in records:
             result = match_id_exact(record, session)
-            print(f"Result from match_id: {result}")
+            results.append(result)
 
 
 
@@ -58,7 +50,7 @@ def review():
         "confirm.html",
         num_records=num_records,
         form_data=form_data,
-        result=result
+        results=results
     )
 
 print("Registered routes:")

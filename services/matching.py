@@ -1,6 +1,15 @@
 from services.db import SessionLocal, Student, BehaviorRecordDB, Course, student_course
 from fuzzywuzzy import fuzz, process
 
+def get_num_records(form):
+    indices = set()
+    for key in form.keys():
+        if key.startswith("record_"):
+            parts = key.split("_")
+            if len(parts) >= 3:
+                indices.add(int(parts[1]))
+    return max(indices) + 1 if indices else 0
+
 def extract_records(form,num_records):
     records = []
     for i in range(num_records):
@@ -9,8 +18,8 @@ def extract_records(form,num_records):
             if key.startswith(f"record_{i}_"):
                 field_name = key[len(f"record_{i}_"):]
                 record[field_name] = value
-            records.append(record) 
-    return records
+        records.append(record) 
+    return records # This is a list of dicts
 
 def match_id_exact(record, session):
     result = {

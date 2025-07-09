@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import json
 from schemas import BehaviorRecord
 from pydantic import ValidationError
-from toy_db import SessionLocal, Student, BehaviorRecordDB, Course, student_course
+from services.db import SessionLocal, Student, BehaviorRecordDB, Course, student_course
 from fuzzywuzzy import fuzz, process
 
 

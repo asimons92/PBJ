@@ -19,7 +19,7 @@
 
     <p>
         {% if result['candidate_students'] %}
-            There were no perfect matches for a student: {{result['student_name']}}
+            There were no perfect matches for a student: {{result['student_name']}},
             Are any of these the student you meant?
                 <pre>
                     {% for s in result['candidate_students'] %}

@@ -14,6 +14,14 @@
         input[type="text"] { margin-bottom: 0.5em; padding: 0.3em; font-size: 1em; }
         button[type="submit"] { padding: 0.5em 1.5em; font-size: 1em; }
         form { margin-top: 1em; }
+        .aligned-form {
+            display: flex;
+            align-items: center;
+            gap: 1em;
+        }
+        .aligned-form label {
+            margin: 0;
+        }
     </style>
 </head>
 <body>
@@ -22,9 +30,9 @@
         <p>Prototype Flask UI for PBJ (Positive Behavior & JSON)</p>
     </div>
     <div class="section">
-        <form data-test="index-input" method="post" action="/submit">
+        <form class="aligned-form" data-test="index-input" method="post" action="/submit">
             <label for="user_input">Enter text:</label>
-            <input type="text" id="user_input" name="user_input" required>
+            <textarea id="user_input" name="user_input" rows="5" cols="40" required></textarea>
             <button type="submit">Submit</button>
         </form>
     </div>
